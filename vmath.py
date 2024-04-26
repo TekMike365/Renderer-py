@@ -110,7 +110,8 @@ class Vec2():
         return self
 
 class Mat3:
-    def __init__(self, c1:Vec3=Vec3(), c2:Vec3=Vec3(), c3:Vec3=Vec3()) -> None:
+    # default is identity matrix
+    def __init__(self, c1:Vec3=Vec3(x=1.0), c2:Vec3=Vec3(y=1.0), c3:Vec3=Vec3(z=1.0)) -> None:
         self.c1 = c1
         self.c2 = c2
         self.c3 = c3
@@ -185,4 +186,43 @@ class Mat3:
 
     def copy(self):
         return Mat3().add(self)
+
+    def rotate_x(self, rad):
+        sin = math.sin(rad)
+        cos = math.cos(rad)
+        mat = Mat3(
+                Vec3(1.0, 0.0, 0.0),
+                Vec3(0.0, cos, sin),
+                Vec3(0.0, -sin, cos)
+            ).mult(self)
+        self.c1 = mat.c1
+        self.c2 = mat.c2
+        self.c3 = mat.c3
+        return self
+
+    def rotate_y(self, rad):
+        sin = math.sin(rad)
+        cos = math.cos(rad)
+        mat = Mat3(
+                Vec3(cos, 0.0, -sin),
+                Vec3(0.0, 1.0, 0.0),
+                Vec3(sin, 0.0, cos)
+            ).mult(self)
+        self.c1 = mat.c1
+        self.c2 = mat.c2
+        self.c3 = mat.c3
+        return self
+
+    def rotate_z(self, rad):
+        sin = math.sin(rad)
+        cos = math.cos(rad)
+        mat = Mat3(
+                Vec3(cos, sin, 0.0),
+                Vec3(-sin, cos, 0.0),
+                Vec3(0.0, 0.0, 1.0)
+            ).mult(self)
+        self.c1 = mat.c1
+        self.c2 = mat.c2
+        self.c3 = mat.c3
+        return self
 
