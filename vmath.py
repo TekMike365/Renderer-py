@@ -65,6 +65,9 @@ class Vec3():
         self.y = vec.y
         return self
 
+    def __str__(self) -> str:
+        return f"[{self.x}, {self.y}, {self.z}]"
+
 class Vec2():
     def __init__(self, x:float=0.0, y:float=0.0) -> None:
         self.x = x
@@ -103,11 +106,14 @@ class Vec2():
     def rotate(self, rad):
         cos = math.cos(rad)
         sin = math.sin(rad)
-        x = cos * self.x - sin * self.y,
+        x = cos * self.x - sin * self.y
         y = sin * self.x + cos * self.y
         self.x = x
         self.y = y
         return self
+
+    def __str__(self) -> str:
+        return f"[{self.x}, {self.y}]"
 
 class Mat3:
     # default is identity matrix
@@ -147,11 +153,10 @@ class Mat3:
         return self
 
     def mult_vec(self, vec:Vec3) -> Vec3:
-        return Vec3(
-                self.v1.copy().scale(vec.x),
-                self.v2.copy().scale(vec.y),
-                self.v3.copy().scale(vec.z)
-            )
+        v1 = self.c1.copy().scale(vec.x)
+        v2 = self.c2.copy().scale(vec.y)
+        v3 = self.c3.copy().scale(vec.z)
+        return Vec3().add(v1).add(v2).add(v3)
 
     def mult(self, other):
         mat1 = self.copy().transpose()
