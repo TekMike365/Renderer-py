@@ -231,3 +231,8 @@ class Mat3:
         self.c3 = mat.c3
         return self
 
+    def __str__(self) -> str:
+        return f"[{self.c1.x}, {self.c2.x}, {self.c3.x}]\n"\
+               f"[{self.c1.y}, {self.c2.y}, {self.c3.y}]\n"\
+               f"[{self.c1.z}, {self.c2.z}, {self.c3.z}]"
+
