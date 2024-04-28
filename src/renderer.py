@@ -180,7 +180,7 @@ def render() -> None:
                 a2 = get_triangle_area(v1,  v, v3)
                 a3 = get_triangle_area(v1, v2, v)
 
-                tolerance = 10
+                tolerance = 1
                 d = a1 + a2 + a3 - a
                 is_inside = d <= tolerance and d >= -tolerance
 
