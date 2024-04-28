@@ -1,10 +1,14 @@
 import src.renderer as renderer
 
+from copy import deepcopy
+
 from src.vmath import Vec2, Vec3, Mat3
 from src.camera import PerspectiveCam, OrthographicCam
 
 
 PI = 3.141592
+PREVIEW = True
+OUT_FILE_PATH = "cube.bmp"
 
 VERTICES = [
     [ Vec3(-0.5, -0.5, -0.5), Vec3(1.0, 0.0, 0.0) ],
@@ -87,6 +91,48 @@ def fragment_shader(buffer:list) -> tuple[int]:
 renderer.vertex_shader = vertex_shader
 renderer.fragment_shader = fragment_shader
 
-renderer.render()
-renderer.save_screen("cube.bmp")
+
+if PREVIEW:
+    import tkinter
+
+    root = tkinter.Tk()
+
+    canvas = tkinter.Canvas(root, width=CW, height=CH, bg="white")
+    canvas.pack()
+
+    SCALAR = CW / camera.size.x
+    OFFSET = Vec3(CW / 2, CH / 2, 0.0)
+
+    for t in INDICES:
+        i1, i2, i3 = t
+        triangle = [
+            deepcopy(VERTICES[i1]),
+            deepcopy(VERTICES[i2]),
+            deepcopy(VERTICES[i3])
+        ]
+
+        is_visible = False
+        for vertex in triangle:
+            vertex[0] = camera.world_to_screen(vertex[0])
+            if not is_visible:
+                is_visible = camera.is_visible(vertex[0])
+
+        if not is_visible:
+            continue
+
+        for vertex in triangle:
+            vertex[0] = vertex[0].scale(SCALAR)\
+                                 .add(OFFSET)
+
+        p1 = Vec2(triangle[0][0].x, triangle[0][0].y)
+        p2 = Vec2(triangle[1][0].x, triangle[1][0].y)
+        p3 = Vec2(triangle[2][0].x, triangle[2][0].y)
+        canvas.create_line(p1.x, p1.y, p2.x, p2.y)
+        canvas.create_line(p2.x, p2.y, p3.x, p3.y)
+        canvas.create_line(p3.x, p3.y, p1.x, p1.y)
+
+    root.mainloop()
+else:
+    renderer.render()
+    renderer.save_screen(OUT_FILE_PATH)
 
