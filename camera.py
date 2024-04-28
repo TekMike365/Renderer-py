@@ -40,7 +40,7 @@ class Camera:
         pc = point.copy().sub(self.pos)
         vec3 = mat.transpose()\
                   .mult_vec(pc)
-        return Vec3(-vec3.z, -vec3.y, -vec3.z)
+        return Vec3(-vec3.z, -vec3.y, vec3.z)
 
 class OrthographicCam(Camera):
     def __init__(self, pos:Vec3, normal:Vec3, up:Vec3, size:Vec2) -> None:
