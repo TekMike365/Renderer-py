@@ -11,6 +11,19 @@ class Camera:
     def world_to_screen(self, point:Vec3) -> Vec2 | None:
         return None
 
+    def is_visible(self, screen_point:Vec3) -> bool:
+        # if camera is not looking
+        if vec3.x < 0:
+            return False
+
+        if (vec.x < -self.size.x / 2 or
+            vec.y < -self.size.y / 2 or
+            vec.x > self.size.x / 2 or
+            vec.y > self.size.y / 2):
+            return False
+
+        return True
+
     def _world_to_screen(self, point:Vec3, line:Vec3) -> Vec2:
         vn = self.normal.normalize()
         vy = self.up.copy()\
@@ -27,19 +40,7 @@ class Camera:
         pc = point.copy().sub(self.pos)
         vec3 = mat.transpose()\
                   .mult_vec(pc)
-        vec = Vec2(-vec3.z, -vec3.y)
-
-        # if camera is not looking
-        if vec3.x > 0:
-            return None
-
-        if (vec.x < -self.size.x / 2 or
-            vec.y < -self.size.y / 2 or
-            vec.x > self.size.x / 2 or
-            vec.y > self.size.y / 2):
-            return None
-
-        return vec
+        return Vec3(-vec3.z, -vec3.y, -vec3.z)
 
 class OrthographicCam(Camera):
     def __init__(self, pos:Vec3, normal:Vec3, up:Vec3, size:Vec2) -> None:

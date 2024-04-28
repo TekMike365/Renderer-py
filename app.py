@@ -68,10 +68,11 @@ CH = CW * RATIO
 canvas = tkinter.Canvas(root, width=CW, height=CH, bg="white")
 canvas.pack()
 
+SCALAR = CW / camera.size.x
+OFFSET = Vec3(CW / 2, CH / 2, 0.0)
+
 for t in indices:
     i1, i2, i3 = t
-    scalar = CW / camera.size.x
-    offset = Vec2(CW / 2, CH / 2)
     p1 = camera.world_to_screen(vertices[i1])
     p2 = camera.world_to_screen(vertices[i2])
     p3 = camera.world_to_screen(vertices[i3])
@@ -80,9 +81,9 @@ for t in indices:
     p1.y *= -1
     p2.y *= -1
     p3.y *= -1
-    p1 = p1.scale(scalar).add(offset)
-    p2 = p2.scale(scalar).add(offset)
-    p3 = p3.scale(scalar).add(offset)
+    p1 = p1.scale(SCALAR).add(OFFSET)
+    p2 = p2.scale(SCALAR).add(OFFSET)
+    p3 = p3.scale(SCALAR).add(OFFSET)
     canvas.create_line(p1.x, p1.y, p2.x, p2.y)
     canvas.create_line(p2.x, p2.y, p3.x, p3.y)
     canvas.create_line(p3.x, p3.y, p1.x, p1.y)
@@ -107,16 +108,14 @@ i2s = [
 
 for t in i2s:
     i1, i2 = t
-    scalar = CW / camera.size.x
-    offset = Vec2(CW / 2, CH / 2)
     p1 = camera.world_to_screen(vertices[i1])
     p2 = camera.world_to_screen(vertices[i2])
     if p1 == None or p2 == None:
         continue
     p1.y *= -1
     p2.y *= -1
-    p1 = p1.scale(scalar).add(offset)
-    p2 = p2.scale(scalar).add(offset)
+    p1 = p1.scale(SCALAR).add(OFFSET)
+    p2 = p2.scale(SCALAR).add(OFFSET)
     canvas.create_line(p1.x, p1.y, p2.x, p2.y, fill="tomato", width=2)
 
 root.mainloop()
