@@ -13,13 +13,13 @@ class Camera:
 
     def is_visible(self, screen_point:Vec3) -> bool:
         # if camera is not looking
-        if vec3.x < 0:
+        if screen_point.x < 0:
             return False
 
-        if (vec.x < -self.size.x / 2 or
-            vec.y < -self.size.y / 2 or
-            vec.x > self.size.x / 2 or
-            vec.y > self.size.y / 2):
+        if (screen_point.x < -self.size.x / 2 or
+            screen_point.y < -self.size.y / 2 or
+            screen_point.x > self.size.x / 2 or
+            screen_point.y > self.size.y / 2):
             return False
 
         return True
