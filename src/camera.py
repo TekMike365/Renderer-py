@@ -1,5 +1,6 @@
 from math import tan
-from vmath import Vec2, Vec3, Mat3
+
+from .vmath import Vec2, Vec3, Mat3
 
 class Camera:
     def __init__(self, pos:Vec3, normal:Vec3, up:Vec3, size:Vec2) -> None:
@@ -13,7 +14,7 @@ class Camera:
 
     def is_visible(self, screen_point:Vec3) -> bool:
         # if camera is not looking
-        if screen_point.x < 0:
+        if screen_point.z < 0:
             return False
 
         if (screen_point.x < -self.size.x / 2 or
@@ -40,7 +41,7 @@ class Camera:
         pc = point.copy().sub(self.pos)
         vec3 = mat.transpose()\
                   .mult_vec(pc)
-        return Vec3(-vec3.z, -vec3.y, vec3.z)
+        return Vec3(-vec3.z, -vec3.y, -vec3.x)
 
 class OrthographicCam(Camera):
     def __init__(self, pos:Vec3, normal:Vec3, up:Vec3, size:Vec2) -> None:
