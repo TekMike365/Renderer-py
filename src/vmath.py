@@ -1,12 +1,13 @@
 import math
 
+
 class Vec3:
-    def __init__(self, x:float=0.0, y:float=0.0, z:float=0.0) -> None:
+    def __init__(self, x: float = 0.0, y: float = 0.0, z: float = 0.0) -> None:
         self.x = x
         self.y = y
         self.z = z
 
-    def scale(self, scalar:float):
+    def scale(self, scalar: float):
         self.x *= scalar
         self.y *= scalar
         self.z *= scalar
@@ -24,15 +25,15 @@ class Vec3:
         self.z -= other.z
         return self
 
-    def dot(self, other) -> None:
+    def dot(self, other) -> float:
         return self.x * other.x + self.y * other.y + self.z * other.z
 
     def cross(self, other):
         return Vec3(
-                self.y * other.z - self.z * other.y,
-                self.z * other.x - self.x * other.z,
-                self.x * other.y - self.y * other.x
-            )
+            self.y * other.z - self.z * other.y,
+            self.z * other.x - self.x * other.z,
+            self.x * other.y - self.y * other.x,
+        )
 
     def normalize(self):
         scale = self.get_scale()
@@ -68,12 +69,13 @@ class Vec3:
     def __str__(self) -> str:
         return f"[{self.x}, {self.y}, {self.z}]"
 
+
 class Vec2:
-    def __init__(self, x:float=0.0, y:float=0.0) -> None:
+    def __init__(self, x: float = 0.0, y: float = 0.0) -> None:
         self.x = x
         self.y = y
 
-    def scale(self, scalar:float):
+    def scale(self, scalar: float):
         self.x *= scalar
         self.y *= scalar
         return self
@@ -115,9 +117,12 @@ class Vec2:
     def __str__(self) -> str:
         return f"[{self.x}, {self.y}]"
 
+
 class Mat3:
     # default is identity matrix
-    def __init__(self, c1:Vec3=Vec3(x=1.0), c2:Vec3=Vec3(y=1.0), c3:Vec3=Vec3(z=1.0)) -> None:
+    def __init__(
+        self, c1: Vec3 = Vec3(x=1.0), c2: Vec3 = Vec3(y=1.0), c3: Vec3 = Vec3(z=1.0)
+    ) -> None:
         self.c1 = c1
         self.c2 = c2
         self.c3 = c3
@@ -152,7 +157,7 @@ class Mat3:
         self.c3 = r3
         return self
 
-    def mult_vec(self, vec:Vec3) -> Vec3:
+    def mult_vec(self, vec: Vec3) -> Vec3:
         v1 = self.c1.copy().scale(vec.x)
         v2 = self.c2.copy().scale(vec.y)
         v3 = self.c3.copy().scale(vec.z)
@@ -162,22 +167,10 @@ class Mat3:
         mat1 = self.copy().transpose()
         mat2 = other.copy()
         return Mat3(
-                Vec3(
-                    mat1.c1.dot(mat2.c1),
-                    mat1.c2.dot(mat2.c1),
-                    mat1.c3.dot(mat2.c1)
-                ),
-                Vec3(
-                    mat1.c1.dot(mat2.c2),
-                    mat1.c2.dot(mat2.c2),
-                    mat1.c3.dot(mat2.c2)
-                ),
-                Vec3(
-                    mat1.c1.dot(mat2.c3),
-                    mat1.c2.dot(mat2.c3),
-                    mat1.c3.dot(mat2.c3)
-                )
-            )
+            Vec3(mat1.c1.dot(mat2.c1), mat1.c2.dot(mat2.c1), mat1.c3.dot(mat2.c1)),
+            Vec3(mat1.c1.dot(mat2.c2), mat1.c2.dot(mat2.c2), mat1.c3.dot(mat2.c2)),
+            Vec3(mat1.c1.dot(mat2.c3), mat1.c2.dot(mat2.c3), mat1.c3.dot(mat2.c3)),
+        )
 
     def invert(self):
         c1 = self.c2.cross(self.c3)
@@ -195,11 +188,9 @@ class Mat3:
     def rotate_x(self, rad):
         sin = math.sin(rad)
         cos = math.cos(rad)
-        mat = Mat3(
-                Vec3(1.0, 0.0, 0.0),
-                Vec3(0.0, cos, sin),
-                Vec3(0.0, -sin, cos)
-            ).mult(self)
+        mat = Mat3(Vec3(1.0, 0.0, 0.0), Vec3(0.0, cos, sin), Vec3(0.0, -sin, cos)).mult(
+            self
+        )
         self.c1 = mat.c1
         self.c2 = mat.c2
         self.c3 = mat.c3
@@ -208,11 +199,9 @@ class Mat3:
     def rotate_y(self, rad):
         sin = math.sin(rad)
         cos = math.cos(rad)
-        mat = Mat3(
-                Vec3(cos, 0.0, -sin),
-                Vec3(0.0, 1.0, 0.0),
-                Vec3(sin, 0.0, cos)
-            ).mult(self)
+        mat = Mat3(Vec3(cos, 0.0, -sin), Vec3(0.0, 1.0, 0.0), Vec3(sin, 0.0, cos)).mult(
+            self
+        )
         self.c1 = mat.c1
         self.c2 = mat.c2
         self.c3 = mat.c3
@@ -221,18 +210,17 @@ class Mat3:
     def rotate_z(self, rad):
         sin = math.sin(rad)
         cos = math.cos(rad)
-        mat = Mat3(
-                Vec3(cos, sin, 0.0),
-                Vec3(-sin, cos, 0.0),
-                Vec3(0.0, 0.0, 1.0)
-            ).mult(self)
+        mat = Mat3(Vec3(cos, sin, 0.0), Vec3(-sin, cos, 0.0), Vec3(0.0, 0.0, 1.0)).mult(
+            self
+        )
         self.c1 = mat.c1
         self.c2 = mat.c2
         self.c3 = mat.c3
         return self
 
     def __str__(self) -> str:
-        return f"[{self.c1.x}, {self.c2.x}, {self.c3.x}]\n"\
-               f"[{self.c1.y}, {self.c2.y}, {self.c3.y}]\n"\
-               f"[{self.c1.z}, {self.c2.z}, {self.c3.z}]"
-
+        return (
+            f"[{self.c1.x}, {self.c2.x}, {self.c3.x}]\n"
+            f"[{self.c1.y}, {self.c2.y}, {self.c3.y}]\n"
+            f"[{self.c1.z}, {self.c2.z}, {self.c3.z}]"
+        )
