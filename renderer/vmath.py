@@ -174,7 +174,7 @@ class Mat4:
         self.c4.add(Vec4(0.0, 0.0, v3.z, 0.0))
         return self
 
-    def rotate_mat4(self, angle: Vec3):
+    def rotate(self, angle: Vec3):
         sin = Vec3(math.sin(angle.x), math.sin(angle.y), math.sin(angle.z))
         cos = Vec3(math.cos(angle.x), math.cos(angle.y), math.cos(angle.z))
 
