@@ -12,6 +12,7 @@ class Camera:
         self._screen = screen
         self._fov_deg = fov_deg
         self._fov_rad = 2 * math.pi * (360.0 / fov_deg)
+        self._focal_len = self._screen.x / (2 * math.atan(self._fov_rad / 2))
 
     def change_clipping(self, near: float, far: float) -> Self:
         self._near = near
@@ -21,14 +22,12 @@ class Camera:
     def change_fov(self, fov_deg: float) -> Self:
         self._fov_deg = fov_deg
         self._fov_rad = 2 * math.pi * (360.0 / fov_deg)
+        self._focal_len = self._screen.x / (2 * math.atan(self._fov_rad / 2))
         return self
 
     def change_screen(self, screen: Vec2) -> Self:
         self._screen = screen
         return self
-
-    def get_focal_len(self) -> float:
-        return self._screen.x / (2 * math.atan(self._fov_rad / 2))
 
     def translate(self, dir: Vec3) -> Self:
         self._posmat.translate(dir.copy().scale(-1))
@@ -41,3 +40,7 @@ class Camera:
     def scale(self, scale: Vec3) -> Self:
         self._posmat.scale(scale.copy().scale(-1))
         return self
+
+    def world2screen_pos(self, point: Vec3) -> Vec3:
+        t = self._focal_len / (self._focal_len - point.z)
+        return Vec3(point.x * t, point.y * t, t)
