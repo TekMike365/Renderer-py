@@ -74,8 +74,8 @@ def triangle_lerp_any(
 vertex_buffer: list[list[Any]] = []
 index_buffer: list = []
 uniform_buffer: dict = {}
-vertex_shader: FunctionType | None = None
-fragment_shader: FunctionType | None = None
+vertex_shader_fn = None
+fragment_shader_fn = None
 screen_buffer: list[int] = []
 depth_buffer: list[float] = []
 clear_color: Vec3 = Vec3(0, 0, 0)
@@ -83,7 +83,7 @@ screen_size: Vec2 = Vec2(640, 420)
 
 
 def draw_triangles():
-    if vertex_shader is None or fragment_shader is None:
+    if vertex_shader_fn is None or fragment_shader_fn is None:
         return
 
     iidxs = 0
@@ -92,7 +92,7 @@ def draw_triangles():
         vert_shader_outs: list[list[Any]] = []
 
         for i in indices:
-            vert_shader_outs += [vertex_shader(vertex_buffer[i], uniform_buffer)]
+            vert_shader_outs += [vertex_shader_fn(vertex_buffer[i], uniform_buffer)]
 
         # get positions
         vp1, vp2, vp3 = vert_shader_outs
@@ -144,7 +144,9 @@ def draw_triangles():
                         triangle_lerp_any((p1, v1), (p2, v2), (p3, v3), point)
                     ]
 
-                color: Vec3 = fragment_shader(lerped_vert_shader_outs, uniform_buffer)
+                color: Vec3 = fragment_shader_fn(
+                    lerped_vert_shader_outs, uniform_buffer
+                )
                 screen_buffer[(y * int(screen_size.x) + x) * 3 + 0] = int(color.x)
                 screen_buffer[(y * int(screen_size.x) + x) * 3 + 1] = int(color.y)
                 screen_buffer[(y * int(screen_size.x) + x) * 3 + 2] = int(color.z)
@@ -152,14 +154,14 @@ def draw_triangles():
         iidxs += 3
 
 
-def upload_vertex_shader(shader: FunctionType) -> None:
-    global vertex_shader
-    vertex_shader = shader
+def upload_vertex_shader_fn(shader_fn) -> None:
+    global vertex_shader_fn
+    vertex_shader_fn = shader_fn
 
 
-def upload_fragment_shader(shader: FunctionType) -> None:
-    global fragment_shader
-    fragment_shader = shader
+def upload_fragment_shader_fn(shader_fn) -> None:
+    global fragment_shader_fn
+    fragment_shader_fn = shader_fn
 
 
 def set_clear_color(color: Vec3) -> None:
