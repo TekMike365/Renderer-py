@@ -1,7 +1,7 @@
 import math
 
 from typing import Self
-from vmath import Mat4, Vec3, Vec2
+from .vmath import Mat4, Vec3, Vec2
 
 
 class Camera:
