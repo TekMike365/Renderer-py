@@ -31,6 +31,47 @@ def triangle_lerp(
     return interpolated_value
 
 
+def triangle_lerp_any(
+    vp1: tuple[Vec2, Any], vp2: tuple[Vec2, Any], vp3: tuple[Vec2, Any], point: Vec2
+) -> Any:
+    p1, v1 = vp1
+    p2, v2 = vp2
+    p3, v3 = vp3
+    vp_type = type(p1)
+    if isinstance(vp_type, float):
+        return triangle_lerp((p1, v1), (p2, v2), (p3, v3), point)
+    elif isinstance(vp_type, int):
+        return int(
+            triangle_lerp((p1, float(v1)), (p2, float(v2)), (p3, float(v3)), point)
+        )
+    elif isinstance(vp_type, Vec2):
+        ivx = triangle_lerp((p1, v1.x), (p2, v2.x), (p3, v3.x), point)
+        ivy = triangle_lerp((p1, v1.y), (p2, v2.y), (p3, v3.y), point)
+        return Vec2(ivx, ivy)
+    elif isinstance(vp_type, Vec3):
+        ivx = triangle_lerp((p1, v1.x), (p2, v2.x), (p3, v3.x), point)
+        ivy = triangle_lerp((p1, v1.y), (p2, v2.y), (p3, v3.y), point)
+        ivz = triangle_lerp((p1, v1.z), (p2, v2.z), (p3, v3.z), point)
+        return Vec3(ivx, ivy, ivz)
+    elif isinstance(vp_type, Vec4):
+        ivx = triangle_lerp((p1, v1.x), (p2, v2.x), (p3, v3.x), point)
+        ivy = triangle_lerp((p1, v1.y), (p2, v2.y), (p3, v3.y), point)
+        ivz = triangle_lerp((p1, v1.z), (p2, v2.z), (p3, v3.z), point)
+        ivw = triangle_lerp((p1, v1.w), (p2, v2.w), (p3, v3.w), point)
+        return Vec4(ivx, ivy, ivz, ivw)
+    elif isinstance(vp_type, Mat4):
+        iv1 = triangle_lerp_any((p1, v1.c1), (p2, v2.c1), (p2, v2.c1), point)
+        iv2 = triangle_lerp_any((p1, v1.c2), (p2, v2.c2), (p2, v2.c2), point)
+        iv3 = triangle_lerp_any((p1, v1.c3), (p2, v2.c3), (p2, v2.c3), point)
+        iv4 = triangle_lerp_any((p1, v1.c4), (p2, v2.c4), (p2, v2.c4), point)
+        mat = Mat4()
+        mat.c1 = iv1
+        mat.c2 = iv2
+        mat.c3 = iv3
+        mat.c4 = iv4
+        return mat
+
+
 vertex_buffer: list[list[Any]] = []
 index_buffer: list = []
 uniform_buffer: list = []
@@ -96,11 +137,18 @@ def draw_triangles():
                 if depth > depth_buffer[y * int(screen_size.x) + x]:
                     continue
 
-                # TODO: interpolate vert_shader_outs
+                # interpolate vert_shader_outs
                 lerped_vert_shader_outs = []
+                for i in range(1, len(vp1)):
+                    v1, v2, v3 = vp1[i], vp2[i], vp3[i]
+                    lerped_vert_shader_outs += [
+                        triangle_lerp_any((p1, v1), (p2, v2), (p3, v3), point)
+                    ]
 
-                # TODO: color = fragment_shader(vert_shader_outs[1:], uniform_buffer)
-                pass
+                color: Vec3 = fragment_shader(lerped_vert_shader_outs, uniform_buffer)
+                screen_buffer[(y * int(screen_size.x) + x) * 3 + 0] = int(color.x)
+                screen_buffer[(y * int(screen_size.x) + x) * 3 + 1] = int(color.y)
+                screen_buffer[(y * int(screen_size.x) + x) * 3 + 2] = int(color.z)
 
         iidxs += 3
 
