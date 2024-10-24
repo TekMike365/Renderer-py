@@ -36,29 +36,29 @@ def triangle_lerp_any(
     p1, v1 = vp1
     p2, v2 = vp2
     p3, v3 = vp3
-    vp_type = type(p1)
-    if isinstance(vp_type, float):
+    vp_type = type(v1)
+    if vp_type is float:
         return triangle_lerp((p1, v1), (p2, v2), (p3, v3), point)
     elif isinstance(vp_type, int):
         return int(
             triangle_lerp((p1, float(v1)), (p2, float(v2)), (p3, float(v3)), point)
         )
-    elif isinstance(vp_type, Vec2):
+    elif vp_type is Vec2:
         ivx = triangle_lerp((p1, v1.x), (p2, v2.x), (p3, v3.x), point)
         ivy = triangle_lerp((p1, v1.y), (p2, v2.y), (p3, v3.y), point)
         return Vec2(ivx, ivy)
-    elif isinstance(vp_type, Vec3):
+    elif vp_type is Vec3:
         ivx = triangle_lerp((p1, v1.x), (p2, v2.x), (p3, v3.x), point)
         ivy = triangle_lerp((p1, v1.y), (p2, v2.y), (p3, v3.y), point)
         ivz = triangle_lerp((p1, v1.z), (p2, v2.z), (p3, v3.z), point)
         return Vec3(ivx, ivy, ivz)
-    elif isinstance(vp_type, Vec4):
+    elif vp_type is Vec4:
         ivx = triangle_lerp((p1, v1.x), (p2, v2.x), (p3, v3.x), point)
         ivy = triangle_lerp((p1, v1.y), (p2, v2.y), (p3, v3.y), point)
         ivz = triangle_lerp((p1, v1.z), (p2, v2.z), (p3, v3.z), point)
         ivw = triangle_lerp((p1, v1.w), (p2, v2.w), (p3, v3.w), point)
         return Vec4(ivx, ivy, ivz, ivw)
-    elif isinstance(vp_type, Mat4):
+    elif vp_type is Mat4:
         iv1 = triangle_lerp_any((p1, v1.c1), (p2, v2.c1), (p2, v2.c1), point)
         iv2 = triangle_lerp_any((p1, v1.c2), (p2, v2.c2), (p2, v2.c2), point)
         iv3 = triangle_lerp_any((p1, v1.c3), (p2, v2.c3), (p2, v2.c3), point)
@@ -69,6 +69,26 @@ def triangle_lerp_any(
         mat.c3 = iv3
         mat.c4 = iv4
         return mat
+
+
+def is_in_triangle(p1: Vec2, p2: Vec2, p3: Vec2, point: Vec2) -> bool:
+    v1 = p1.copy().sub(p2)
+    v2 = p1.copy().sub(p3)
+    a = Vec3(v1.x, v1.y).cross(Vec3(v2.x, v2.y)).get_scale()
+
+    v1 = point.copy().sub(p1)
+    v2 = point.copy().sub(p2)
+    a1 = Vec3(v1.x, v1.y).cross(Vec3(v2.x, v2.y)).get_scale()
+
+    v1 = point.copy().sub(p2)
+    v2 = point.copy().sub(p3)
+    a2 = Vec3(v1.x, v1.y).cross(Vec3(v2.x, v2.y)).get_scale()
+
+    v1 = point.copy().sub(p1)
+    v2 = point.copy().sub(p3)
+    a3 = Vec3(v1.x, v1.y).cross(Vec3(v2.x, v2.y)).get_scale()
+
+    return a > a1 + a2 + a3 - 1e-6
 
 
 vertex_buffer: list[list[Any]] = []
@@ -89,6 +109,8 @@ def draw_triangles():
     iidxs = 0
     while iidxs < len(index_buffer):
         indices = index_buffer[iidxs : iidxs + 3]
+        iidxs += 3
+
         vert_shader_outs: list[list[Any]] = []
 
         for i in indices:
@@ -97,13 +119,13 @@ def draw_triangles():
         # get positions
         vp1, vp2, vp3 = vert_shader_outs
         p1 = Vec2(
-            (vp1[0].x + 2) / 2 * screen_size.x, (vp1[0].y + 2) / 2 * screen_size.y
+            (vp1[0].x + 1) / 2 * screen_size.x, (vp1[0].y + 1) / 2 * screen_size.y
         )
         p2 = Vec2(
-            (vp2[0].x + 2) / 2 * screen_size.x, (vp2[0].y + 2) / 2 * screen_size.y
+            (vp2[0].x + 1) / 2 * screen_size.x, (vp2[0].y + 1) / 2 * screen_size.y
         )
         p3 = Vec2(
-            (vp3[0].x + 2) / 2 * screen_size.x, (vp3[0].y + 2) / 2 * screen_size.y
+            (vp3[0].x + 1) / 2 * screen_size.x, (vp3[0].y + 1) / 2 * screen_size.y
         )
         bounding_box_min = Vec2(min(p1.x, p2.x, p3.x), min(p1.y, p2.y, p3.y))
         bounding_box_max = Vec2(max(p1.x, p2.x, p3.x), max(p1.y, p2.y, p3.y))
@@ -126,8 +148,13 @@ def draw_triangles():
                 if x > screen_size.x:
                     break
 
-                # calculating depth
                 point = Vec2(x, y)
+
+                # culling l3.5
+                if not is_in_triangle(p1, p2, p3, point):
+                    continue
+
+                # calculating depth
                 depth = triangle_lerp(
                     (p1, vp1[0].z), (p2, vp2[0].z), (p3, vp3[0].z), point
                 )
@@ -147,11 +174,9 @@ def draw_triangles():
                 color: Vec3 = fragment_shader_fn(
                     lerped_vert_shader_outs, uniform_buffer
                 )
-                screen_buffer[(y * int(screen_size.x) + x) * 3 + 0] = int(color.x)
-                screen_buffer[(y * int(screen_size.x) + x) * 3 + 1] = int(color.y)
-                screen_buffer[(y * int(screen_size.x) + x) * 3 + 2] = int(color.z)
-
-        iidxs += 3
+                screen_buffer[(y * int(screen_size.x) + x) * 3 + 0] = int(color.z * 255)
+                screen_buffer[(y * int(screen_size.x) + x) * 3 + 1] = int(color.y * 255)
+                screen_buffer[(y * int(screen_size.x) + x) * 3 + 2] = int(color.x * 255)
 
 
 def upload_vertex_shader_fn(shader_fn) -> None:

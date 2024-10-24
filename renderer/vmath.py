@@ -154,7 +154,7 @@ class Vec4:
         return Vec4().add(self)
 
     def __str__(self) -> str:
-        return f"[{self.x}, {self.y}]"
+        return f"[{self.x}, {self.y}, {self.z}, {self.w}]"
 
 
 class Mat4:
@@ -175,9 +175,9 @@ class Mat4:
         return self
 
     def scale(self, v3: Vec3):
-        self.c4.add(Vec4(v3.x, 0.0, 0.0))
-        self.c4.add(Vec4(0.0, v3.y, 0.0, 0.0))
-        self.c4.add(Vec4(0.0, 0.0, v3.z, 0.0))
+        self.c1.x *= v3.x
+        self.c2.y *= v3.y
+        self.c3.z *= v3.z
         return self
 
     def rotate(self, angle: Vec3):
@@ -204,6 +204,13 @@ class Mat4:
 
         self.mul(rot_x).mul(rot_y).mul(rot_z)
         return self
+
+    def transform(self, v3: Vec3) -> Vec3:
+        return Vec3(
+            v3.x * self.c1.x + v3.y * self.c2.x + v3.z * self.c3.x + self.c4.x,
+            v3.x * self.c1.y + v3.y * self.c2.y + v3.z * self.c3.y + self.c4.y,
+            v3.x * self.c1.z + v3.y * self.c2.z + v3.z * self.c3.z + self.c4.z
+        )
 
     def copy(self):
         new = Mat4()

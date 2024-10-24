@@ -35,9 +35,10 @@ class Camera:
         return self
 
     def world2screen_pos(self, point: Vec3) -> Vec3:
-        t = self._focal_len / (self._focal_len - point.z)
+        trans = self._posmat.transform(point)
+        t = self._focal_len / (self._focal_len + trans.z)
         return Vec3(
-            point.x * t / self._screen_size.x / 2,
-            point.y * t / self._screen_size.y / 2,
+            trans.x * t / (self._screen_size.x / 2),
+            trans.y * t / (self._screen_size.y / 2),
             t,
         )
