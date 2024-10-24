@@ -2,12 +2,14 @@ import math
 
 
 class Vec3:
-    def __init__(self, x: float = 0.0, y: float = 0.0, z: float = 0.0) -> None:
+    def __init__(
+        self, x: float | int = 0.0, y: float | int = 0.0, z: float | int = 0.0
+    ) -> None:
         self.x = x
         self.y = y
         self.z = z
 
-    def scale(self, scalar: float):
+    def scale(self, scalar: float | int):
         self.x *= scalar
         self.y *= scalar
         self.z *= scalar
@@ -53,11 +55,11 @@ class Vec3:
 
 
 class Vec2:
-    def __init__(self, x: float = 0.0, y: float = 0.0) -> None:
+    def __init__(self, x: float | int = 0.0, y: float | int = 0.0) -> None:
         self.x = x
         self.y = y
 
-    def scale(self, scalar: float):
+    def scale(self, scalar: float | int):
         self.x *= scalar
         self.y *= scalar
         return self
@@ -102,14 +104,18 @@ class Vec2:
 
 class Vec4:
     def __init__(
-        self, x: float = 0.0, y: float = 0.0, z: float = 0.0, w: float = 0.0
+        self,
+        x: float | int = 0.0,
+        y: float | int = 0.0,
+        z: float | int = 0.0,
+        w: float | int = 0.0,
     ) -> None:
         self.x = x
         self.y = y
         self.z = z
         self.w = w
 
-    def scale(self, scalar: float):
+    def scale(self, scalar: float | int):
         self.x *= scalar
         self.y *= scalar
         self.z *= scalar
