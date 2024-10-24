@@ -7,8 +7,8 @@ from .renderer import (
     upload_vertex_buffer,
     upload_index_buffer,
     upload_uniform,
-    upload_vertex_shader,
-    upload_fragment_shader,
+    upload_vertex_shader_fn,
+    upload_fragment_shader_fn,
     draw_triangles,
     save,
 )
@@ -25,8 +25,8 @@ __all__ = [
     "upload_vertex_buffer",
     "upload_index_buffer",
     "upload_uniform",
-    "upload_vertex_shader",
-    "upload_fragment_shader",
+    "upload_vertex_shader_fn",
+    "upload_fragment_shader_fn",
     "draw_triangles",
     "save",
 ]
