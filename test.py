@@ -82,3 +82,4 @@ re.upload_index_buffer(indices)
 
 re.clear_screen()
 re.draw_triangles()
+re.save("test.bmp")
