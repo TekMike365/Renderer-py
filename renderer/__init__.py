@@ -9,6 +9,7 @@ from .renderer import (
     upload_uniform,
     upload_vertex_shader,
     upload_fragment_shader,
+    draw_triangles,
     save,
 )
 
@@ -26,5 +27,6 @@ __all__ = [
     "upload_uniform",
     "upload_vertex_shader",
     "upload_fragment_shader",
+    "draw_triangles",
     "save",
 ]
