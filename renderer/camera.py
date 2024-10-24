@@ -5,21 +5,12 @@ from .vmath import Mat4, Vec3, Vec2
 
 
 class Camera:
-    def __init__(
-        self, fov_deg: float, screen_size: Vec2, near: float, far: float
-    ) -> None:
+    def __init__(self, fov_deg: float, screen_size: Vec2) -> None:
         self._posmat = Mat4()
-        self._near = near
-        self._far = far
         self._screen_size = screen_size
         self._fov_deg = fov_deg
         self._fov_rad = 2 * math.pi * (360.0 / fov_deg)
         self._focal_len = self._screen_size.x / (2 * math.atan(self._fov_rad / 2))
-
-    def change_clipping(self, near: float, far: float) -> Self:
-        self._near = near
-        self._far = far
-        return self
 
     def change_fov(self, fov_deg: float) -> Self:
         self._fov_deg = fov_deg
