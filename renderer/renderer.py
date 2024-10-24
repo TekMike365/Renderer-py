@@ -73,7 +73,7 @@ def triangle_lerp_any(
 
 vertex_buffer: list[list[Any]] = []
 index_buffer: list = []
-uniform_buffer: list = []
+uniform_buffer: dict = {}
 vertex_shader: FunctionType | None = None
 fragment_shader: FunctionType | None = None
 screen_buffer: list[int] = []
@@ -190,9 +190,9 @@ def upload_index_buffer(buffer: list) -> None:
     index_buffer = buffer
 
 
-def upload_uniform(val: Any) -> None:
+def upload_uniform(val: Any, name: str) -> None:
     global uniform_buffer
-    uniform_buffer += [val]
+    uniform_buffer[name] = val
 
 
 def save(filepath: str) -> None:
