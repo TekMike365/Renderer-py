@@ -34,8 +34,8 @@ def triangle_lerp_any(
     vp1: tuple[Vec2, Any], vp2: tuple[Vec2, Any], vp3: tuple[Vec2, Any], point: Vec2
 ) -> Any:
     p1, v1 = vp1
-    p2, v2 = vp2
-    p3, v3 = vp3
+    p3, v2 = vp2
+    p2, v3 = vp3
     vp_type = type(v1)
     if vp_type is float:
         return triangle_lerp((p1, v1), (p2, v2), (p3, v3), point)

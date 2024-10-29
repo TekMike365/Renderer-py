@@ -20,18 +20,20 @@ def vertex_shader(atribs: list[Any], uniforms: dict) -> list[Any]:
 
 
 def fragment_shader(vout: list[Any], uniforms: dict) -> re.Vec3:
-    v_color: re.Vec3 = vout[0];
+    v_color: re.Vec3 = vout[0]
     return v_color
 
 
 re.upload_vertex_shader_fn(vertex_shader)
 re.upload_fragment_shader_fn(fragment_shader)
 
-re.upload_vertex_buffer([
-    [re.Vec3(0.0, 0.5, 0.0), re.Vec3(1.0, 0.0, 0.0)],
-    [re.Vec3(-0.5, -0.5, 0.0), re.Vec3(0.0, 1.0, 0.0)],
-    [re.Vec3(0.5, -0.5, 0.0), re.Vec3(0.0, 0.0, 1.0)],
-])
+re.upload_vertex_buffer(
+    [
+        [re.Vec3(0.0, 0.5, 0.0), re.Vec3(1.0, 0.0, 0.0)],
+        [re.Vec3(-0.5, -0.5, 0.0), re.Vec3(0.0, 1.0, 0.0)],
+        [re.Vec3(0.5, -0.5, 0.0), re.Vec3(0.0, 0.0, 1.0)],
+    ]
+)
 re.upload_index_buffer([0, 1, 2])
 
 re.clear_screen()
