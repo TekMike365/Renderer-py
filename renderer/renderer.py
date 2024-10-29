@@ -3,24 +3,44 @@ from .vmath import Mat4, Vec2, Vec3, Vec4
 from .bitmap import make_bitmap
 
 
+def lerp(v1: float, v2: float, t: float) -> float:
+    return (1 - t) * v1 + t * v2
+
+
+def tlerp(v1: float, v2: float, v3: float, t: float, s: float) -> float:
+    i = lerp(v1, v2, t)
+    return lerp(v3, i, s)
+
+
 def triangle_lerp(
-    p1: tuple[Vec2, float], p2: tuple[Vec2, float], p3: tuple[Vec2, float], point: Vec2
+    vp1: tuple[Vec2, float], vp2: tuple[Vec2, float], vp3: tuple[Vec2, float], pt: Vec2
 ) -> float:
-    v1 = p1[0].copy().sub(p3[0])
-    v2 = p2[0].copy().sub(p3[0])
-    v3 = point.copy().sub(p3[0])
+    p1, v1 = vp1
+    p2, v2 = vp2
+    p3, v3 = vp3
 
-    un = v3.x * v2.y - v2.x * v3.y
-    ud = v1.x * v2.y - v2.x * v1.y
-    u = un / ud
+    va = p2.copy().sub(p1)
+    vc = pt.copy().sub(p3)
 
-    vn = v3.y - v1.y * u
-    vd = v2.y
-    v = vn / vd
+    b = vc.y * (p1.x - p3.x) - vc.x * (p1.y - p3.y)
+    a = vc.y * va.x - vc.x * va.y
 
-    w = 1.0 - u - v
+    if a == 0:
+        return 0
 
-    return p1[1] * u + p2[1] * v + p3[1] * w
+    t = -b / a
+
+    vi = p1.copy().add(va.copy().scale(t))
+    i = lerp(v1, v2, t)
+
+    vn = vi.copy().sub(p3)
+
+    if vn.get_scale() == 0:
+        return 0
+
+    s = vc.get_scale() / vn.get_scale()
+
+    return lerp(v3, i, s)
 
 
 def triangle_lerp_any(
