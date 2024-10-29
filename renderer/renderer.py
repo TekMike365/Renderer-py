@@ -6,18 +6,21 @@ from .bitmap import make_bitmap
 def triangle_lerp(
     p1: tuple[Vec2, float], p2: tuple[Vec2, float], p3: tuple[Vec2, float], point: Vec2
 ) -> float:
-    # Calculate the barycentric coordinates of the point inside the triangle_lerp
     v1 = p1[0].copy().sub(p3[0])
     v2 = p2[0].copy().sub(p3[0])
     v3 = point.copy().sub(p3[0])
-    u = (v3.x * v2.y - v2.x * v3.y) / (v1.x * v2.y - v2.x * v1.y)
-    v = (v3.y - v1.y * u) / (v2.y)
-    w = 1 - u - v
 
-    # Interpolate the values based on the barycentric coordinates
-    interpolated_value = p1[1] * u + p2[1] * v + p3[1] * w
+    un = v3.x * v2.y - v2.x * v3.y
+    ud = v1.x * v2.y - v2.x * v1.y
+    u = un / ud
 
-    return interpolated_value
+    vn = v3.y - v1.y * u
+    vd = v2.y
+    v = vn / vd
+
+    w = 1.0 - u - v
+
+    return p1[1] * u + p2[1] * v + p3[1] * w
 
 
 def triangle_lerp_any(
