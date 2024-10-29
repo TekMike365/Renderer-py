@@ -173,7 +173,7 @@ def draw_triangles():
                 )
 
                 # culling l4
-                if depth > depth_buffer[y * int(screen_size.x) + x]:
+                if depth >= depth_buffer[y * int(screen_size.x) + x]:
                     continue
 
                 # interpolate vert_shader_outs
