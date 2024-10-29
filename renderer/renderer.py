@@ -6,21 +6,12 @@ from .bitmap import make_bitmap
 def triangle_lerp(
     p1: tuple[Vec2, float], p2: tuple[Vec2, float], p3: tuple[Vec2, float], point: Vec2
 ) -> float:
-    # Calculate the barycentric coordinates of the point inside the triangle
-    u = (
-        (p2[0].y - p3[0].y) * (point.x - p3[0].x)
-        + (p3[0].x - p2[0].x) * (point.y - p3[0].y)
-    ) / (
-        (p2[0].y - p3[0].y) * (p1[0].x - p3[0].x)
-        + (p3[0].x - p2[0].x) * (p1[0].y - p3[0].y)
-    )
-    v = (
-        (p1[0].y - p2[0].y) * (point.x - p2[0].x)
-        + (p2[0].x - p1[0].x) * (point.y - p2[0].y)
-    ) / (
-        (p2[0].y - p3[0].y) * (p1[0].x - p3[0].x)
-        + (p3[0].x - p2[0].x) * (p1[0].y - p3[0].y)
-    )
+    # Calculate the barycentric coordinates of the point inside the triangle_lerp
+    v1 = p1[0].copy().sub(p3[0])
+    v2 = p2[0].copy().sub(p3[0])
+    v3 = point.copy().sub(p3[0])
+    u = (v3.x * v2.y - v2.x * v3.y) / (v1.x * v2.y - v2.x * v1.y)
+    v = (v3.y - v1.y * u) / (v2.y)
     w = 1 - u - v
 
     # Interpolate the values based on the barycentric coordinates
@@ -33,8 +24,8 @@ def triangle_lerp_any(
     vp1: tuple[Vec2, Any], vp2: tuple[Vec2, Any], vp3: tuple[Vec2, Any], point: Vec2
 ) -> Any:
     p1, v1 = vp1
-    p3, v2 = vp2
-    p2, v3 = vp3
+    p2, v2 = vp2
+    p3, v3 = vp3
     vp_type = type(v1)
     if vp_type is float:
         return triangle_lerp((p1, v1), (p2, v2), (p3, v3), point)
